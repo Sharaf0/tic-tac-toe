@@ -2,45 +2,28 @@ import React from "react";
 import classes from "./styles.module.scss";
 
 function App() {
-  return <div className={classes.game}>
-    <div className={classes.board}>
-      <div className={classes.boardRow}>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
+  const renderSquare = (i: number) => {
+    return <button key={i} className={classes.square}></button>;
+  };
+  const renderRow = (i: number) => {
+    return (
+      <div key={i} className={classes.boardRow}>
+        {Array<number>(15
+        )
+          .fill(0)
+          .map((_: any, i: number) => renderSquare(i))}
       </div>
-      <div className={classes.boardRow}>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-      </div>
-      <div className={classes.boardRow}>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-      </div>
-      <div className={classes.boardRow}>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-      </div>
-      <div className={classes.boardRow}>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
-        <button className={classes.square}></button>
+    );
+  };
+  return (
+    <div className={classes.game}>
+      <div className={classes.board}>
+        {Array<number>(15)
+          .fill(0)
+          .map((_: any, i: number) => renderRow(i))}
       </div>
     </div>
-  </div>;
+  );
 }
 
 export default App;
