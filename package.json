@@ -23,11 +23,6 @@
     "eject": "react-scripts eject",
     "pretty": "prettier --write \"**/*.tsx\" && prettier --write \"**/*.ts\""
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn pretty"
-    }
-  },
   "eslintConfig": {
     "extends": "react-app"
   },
