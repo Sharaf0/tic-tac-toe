@@ -7,7 +7,7 @@ interface Props {
 //FIXME: Score is being called with every click!
 const Score = (props: Props) => {
   const { getPlayerName } = useContext(playersContext);
-  
+
   return (
     <div>
       {props.scores.map((score, index) => (

@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useMemo, useContext, useEffect } from "react";
+import React, {
+  useState,
+  useCallback,
+  useMemo,
+  useContext,
+  useEffect,
+} from "react";
 import classes from "./styles.module.scss";
 import Square from "./Square";
 import Score from "./Score";
@@ -7,9 +13,14 @@ import { playersContext } from "./contexts/PlayersContext";
 
 const Board = () => {
   //TODO: Get from config
-  const { setInitialPlayer, numberOfPlayers, currentPlayer, setNextPlayer } = useContext(playersContext);
-  const boardSize = 3;//TODO: 15
-  const winningSize = 2;//TODO: 5
+  const {
+    setInitialPlayer,
+    numberOfPlayers,
+    currentPlayer,
+    setNextPlayer,
+  } = useContext(playersContext);
+  const boardSize = 3; //TODO: 15
+  const winningSize = 2; //TODO: 5
 
   const [lastMove, setLastMove] = useState<string | null>(null);
   //Map between the cell and the player played on that cell if any.
@@ -32,7 +43,7 @@ const Board = () => {
       clonedScores[winnerPlayer]++;
       setScores(clonedScores);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [winnerPlayer]);
 
   const isBoardFilled = useMemo<boolean>(() => {

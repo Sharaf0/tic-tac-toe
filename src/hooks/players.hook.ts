@@ -15,7 +15,7 @@ export const usePlayers = (): PlayersContext => {
   );
 
   const [names, setNames] = useState<string[]>(
-    new Array<string>(DEFAULT_PLAYERS_CONTEXT_VALUE.numberOfPlayers).fill('')
+    new Array<string>(DEFAULT_PLAYERS_CONTEXT_VALUE.numberOfPlayers).fill("")
   );
 
   const setNextPlayer = useCallback(() => {

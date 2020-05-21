@@ -1,9 +1,14 @@
-export const getPositionFromStringToNumbers = (pos: string): [number, number] => {
+export const getPositionFromStringToNumbers = (
+  pos: string
+): [number, number] => {
   const splits = pos.split(",");
   return [+splits[0], +splits[1]];
 };
 
-export const getPositionFromNumbersToString = (r: number, c: number): string => {
+export const getPositionFromNumbersToString = (
+  r: number,
+  c: number
+): string => {
   return r + "," + c;
 };
 
