@@ -1,107 +1,16 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useContext, useEffect } from "react";
 import classes from "./styles.module.scss";
 import Square from "./Square";
 import Score from "./Score";
-
-//TODO: Transfer to Utils?
-const getPositionFromNumbersToString = (r: number, c: number): string => {
-  return r + "," + c;
-};
-
-//TODO: Transfer to Utils?
-const getPositionFromStringToNumbers = (pos: string): [number, number] => {
-  const splits = pos.split(",");
-  return [+splits[0], +splits[1]];
-};
-
-//TODO: Transfer to Utils?
-const getCountFromDirection = (
-  moves: Map<string, number>,
-  player: number,
-  row: number,
-  col: number,
-  verticalMovement: -1 | 0 | 1,
-  horizontalMovement: -1 | 0 | 1,
-  boardSize: number
-): number => {
-  let count = 0;
-  do {
-    row += verticalMovement;
-    col += horizontalMovement;
-    count++;
-  } while (
-    row >= 0 &&
-    col >= 0 &&
-    row < boardSize &&
-    col < boardSize &&
-    moves.get(getPositionFromNumbersToString(row, col)) === player
-  );
-
-  return count;
-};
-
-//TODO: Transfer to Utils?
-const getWinner = (
-  moves: Map<string, number>,
-  lastMove: string,
-  boardSize: number
-): number | null => {
-  if (lastMove === null) return null;
-
-  const [row, col] = getPositionFromStringToNumbers(lastMove);
-  const player = moves.get(lastMove);
-
-  if (player === undefined) {
-    throw Error("last move must exist in moves");
-  }
-
-  enum Directions {
-    Left = -1,
-    Right = 1,
-    Up = -1,
-    Down = 1,
-    Still = 0,
-  }
-  const directions = [
-    //[r, c], [r, c]
-    [
-      [Directions.Still, Directions.Left],
-      [Directions.Still, Directions.Right],
-    ], //left, right
-    [
-      [Directions.Up, Directions.Still],
-      [Directions.Down, Directions.Still],
-    ], //up, down
-    [
-      [Directions.Up, Directions.Right],
-      [Directions.Down, Directions.Left],
-    ], //up right, down left
-    [
-      [Directions.Up, Directions.Left],
-      [Directions.Down, Directions.Right],
-    ], //up left, down right
-  ];
-
-  return directions.some(([d1, d2]) => {
-    const c1 =
-      getCountFromDirection(moves, player, row, col, d1[0], d1[1], boardSize) -
-      1;
-    const c2 =
-      getCountFromDirection(moves, player, row, col, d2[0], d2[1], boardSize) -
-      1;
-    return c1 + c2 + 1 === boardSize;
-  })
-    ? player
-    : null;
-};
+import { getWinner, getPositionFromNumbersToString } from "./lib/Utils";
+import { playersContext } from "./contexts/PlayersContext";
 
 const Board = () => {
   //TODO: Get from config
-  const numberOfPlayers = 2;
-  const boardSize = 3;
-  const intialPlayer = 0;
+  const { setInitialPlayer, numberOfPlayers, currentPlayer, setNextPlayer } = useContext(playersContext);
+  const boardSize = 3;//TODO: 15
+  const winningSize = 2;//TODO: 5
 
-  const [currentPlayer, setCurrentPlayer] = useState<number>(intialPlayer);
   const [lastMove, setLastMove] = useState<string | null>(null);
   //Map between the cell and the player played on that cell if any.
   const [moves, setMoves] = useState<Map<string, number>>(
@@ -113,14 +22,18 @@ const Board = () => {
 
   const winnerPlayer = useMemo<number | null>(() => {
     if (lastMove === null) return null;
-    const winner = getWinner(moves, lastMove, boardSize);
-    if (winner !== null) {
+    const winner = getWinner(moves, lastMove, boardSize, winningSize);
+    return winner;
+  }, [lastMove, moves]);
+
+  useEffect(() => {
+    if (winnerPlayer !== null) {
       const clonedScores = Object.assign([], scores);
-      clonedScores[winner]++;
+      clonedScores[winnerPlayer]++;
       setScores(clonedScores);
     }
-    return winner;
-  }, [lastMove, moves, scores]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [winnerPlayer]);
 
   const isBoardFilled = useMemo<boolean>(() => {
     return moves.size === boardSize * boardSize;
@@ -141,14 +54,14 @@ const Board = () => {
       setLastMove(pos);
       const newMoves = moves.set(pos, currentPlayer);
       setMoves(newMoves);
-      setCurrentPlayer((currentPlayer + 1) % numberOfPlayers);
+      setNextPlayer();
     },
-    [currentPlayer, moves]
+    [currentPlayer, moves, setNextPlayer]
   );
 
   const restartGame = () => {
     //TODO: Fix that.
-    setCurrentPlayer(intialPlayer);
+    setInitialPlayer();
     setLastMove(null);
     setMoves(new Map<string, number>());
   };
