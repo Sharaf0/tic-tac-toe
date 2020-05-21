@@ -1,16 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import classes from "./styles.module.scss";
+import { playersContext } from "./contexts/PlayersContext";
 
 interface Props {
   onClick(): void;
-  playerPlayedHereNumber: number | undefined;
+  playerId: number | undefined;
 }
 
 const Square = (props: Props) => {
+  const { getPlayerSign } = useContext(playersContext);
+  const sign =
+    props.playerId !== undefined ? getPlayerSign(props.playerId) : "";
   return (
     <button className={classes.square} onClick={props.onClick}>
-      {/* TODO: Get what to draw from a context */}
-      {props.playerPlayedHereNumber}
+      {sign}
     </button>
   );
 };

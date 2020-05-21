@@ -1,31 +1,39 @@
 import { createContext } from "react";
 
 export interface PlayersContext {
-  numberOfPlayers: number;
-  currentPlayer: number;
-  setNextPlayer(): void;
-  initialPlayer: number;
-  setInitialPlayer(): void;
+  playingPlayersCount(): number;
+  currentPlayerId: number;
+  setNextPlayerId(): void;
+  // setInitialPlayer(): void;
   getPlayerName(playerNumber: number): string;
   setPlayerName(playerNumber: number, name: string): void;
+  init(names: string[]): void;
+  getPlayerSign(id: number): string;
 }
 
-export const DEFAULT_PLAYERS_CONTEXT_VALUE: PlayersContext = {
+const DEFAULT_PLAYERS_CONTEXT_VALUE: PlayersContext = {
   //TODO: Get those consts from config
-  currentPlayer: -1,
-  initialPlayer: 0,
-  numberOfPlayers: 3,
-  setNextPlayer: () => {
-    throw Error("implement setNextPlayer");
+  currentPlayerId: -1,
+  playingPlayersCount: (): number => {
+    throw Error("implement playingPlayersCount");
   },
-  setInitialPlayer: () => {
-    throw Error("implement setInitialPlayer");
+  init: () => {
+    throw Error("implement init");
   },
+  setNextPlayerId: () => {
+    throw Error("implement setNextPlayerId");
+  },
+  // setInitialPlayer: () => {
+  //   throw Error("implement setInitialPlayer");
+  // },
   getPlayerName: (playerNumber: number) => {
     throw Error("implement getPlayerName");
   },
   setPlayerName: (playerNumber: number, name: string) => {
     throw Error("implement setPlayerName");
+  },
+  getPlayerSign: (id: number): string => {
+    throw Error("implement getPlayerSign");
   },
 };
 
