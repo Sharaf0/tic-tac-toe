@@ -1,4 +1,4 @@
-A live version of the game is available [here](https://sharaf0.github.io/tic-tac-toe/).
+<del> A live version of the game is available [here](https://sharaf0.github.io/tic-tac-toe/). </del> Unfortunately it does not work for some reason, I am working on it.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
