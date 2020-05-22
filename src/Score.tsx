@@ -1,22 +1,23 @@
-import React, { useContext } from "react";
-import { playersContext } from "./contexts/PlayersContext";
+import React from "react";
+import PlayerScore from "./classes/PlayerScore";
 
 interface Props {
-  scores: number[];
+  scores: PlayerScore[];
 }
+
 //FIXME: Score is being called with every click!
 const Score = (props: Props) => {
-  const { getPlayerName } = useContext(playersContext);
-
   return (
     <div>
-      {props.scores.map((score, index) => (
-        <div key={index + 1}>
-          <span>
-            {getPlayerName(index)}: {score}
-          </span>
-        </div>
-      ))}
+      {props.scores
+        .sort((a, b) => (a.name < b.name ? -1 : 1))
+        .map((playerScore, index) => (
+          <div key={index + 1}>
+            <span>
+              {playerScore.name}: {playerScore.score}
+            </span>
+          </div>
+        ))}
     </div>
   );
 };

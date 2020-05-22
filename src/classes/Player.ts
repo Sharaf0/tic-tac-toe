@@ -3,13 +3,11 @@ export default class Player {
   name: string;
   score: number;
   inPlay: boolean;
-  sign: string;
   static count: number = 10;
   constructor(name: string) {
     this.id = Player.count++;
     this.name = name;
     this.score = 0;
     this.inPlay = false;
-    this.sign = "";
   }
 }

@@ -8,6 +8,10 @@ function App() {
   const [inPlayMode, setInPlayMode] = useState<boolean>(false);
   const [names, setNames] = useState<Array<string>>(new Array<string>());
 
+  const restart = () => {
+    setInPlayMode(false);
+  };
+
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value);
     if (!value) return;
@@ -37,9 +41,10 @@ function App() {
   };
 
   const body = inPlayMode ? (
-    <Board names={names} />
+    <Board names={names} restart={restart} />
   ) : (
     <form onSubmit={onSubmit}>
+      <label>Enter number of players: </label>
       <input
         type="number"
         value={numOfPlayers}

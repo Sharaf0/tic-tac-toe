@@ -2,6 +2,7 @@ import { PlayersContext } from "../contexts/PlayersContext";
 
 import { useState, useCallback } from "react";
 import Player from "../classes/Player";
+import PlayerScore from "../classes/PlayerScore";
 
 export const usePlayers = (): PlayersContext => {
   const [playersRepo, setPlayersRepo] = useState<Array<Player>>(
@@ -13,6 +14,15 @@ export const usePlayers = (): PlayersContext => {
   };
 
   const [currentPlayerId, setCurrentPlayerId] = useState(-1);
+
+  const addScoreToWinner = useCallback(
+    (id: number): void => {
+      setPlayersRepo(
+        playersRepo.map((p) => (p.id === id ? { ...p, score: p.score + 1 } : p))
+      );
+    },
+    [playersRepo]
+  );
 
   const setNextPlayerId = useCallback(() => {
     const playingPlayersIds = playersRepo
@@ -36,18 +46,29 @@ export const usePlayers = (): PlayersContext => {
   };
 
   const init = (names: string[]) => {
-    const cloneOfPlayersRepo = playersRepo;
+    const cloneOfPlayersRepo = playersRepo.map((p) => ({
+      ...p,
+      inPlay: false,
+    }));
     let firstId: number = -1;
     for (let index = 0; index < names.length; index++) {
       const name = names[index];
       const indexInRepo = cloneOfPlayersRepo.findIndex((p) => p.name === name);
+
       if (indexInRepo === -1) {
         const player = new Player(name);
         player.inPlay = true;
         cloneOfPlayersRepo.push(player);
         if (firstId === -1) firstId = player.id;
       } else {
-        cloneOfPlayersRepo[indexInRepo].inPlay = true;
+        const player = new Player(cloneOfPlayersRepo[indexInRepo].name);
+        player.id = cloneOfPlayersRepo[indexInRepo].id;
+        player.score = cloneOfPlayersRepo[indexInRepo].score;
+        player.inPlay = true;
+
+        cloneOfPlayersRepo.splice(indexInRepo, 1);
+        cloneOfPlayersRepo.push(player);
+
         if (firstId === -1) firstId = cloneOfPlayersRepo[indexInRepo].id;
       }
     }
@@ -56,19 +77,26 @@ export const usePlayers = (): PlayersContext => {
   };
 
   const getPlayerSign = (id: number): string => {
-    const allSigns = "XO*$^";
+    const allSigns = "XO+#^";
     const playingPlayers = playersRepo.filter((p) => p.inPlay);
     return allSigns[playingPlayers.findIndex((p) => p.id === id)];
+  };
+
+  const getPlayersScores = (): PlayerScore[] => {
+    return playersRepo.map(
+      (player) => new PlayerScore(player.name, player.score)
+    );
   };
 
   return {
     init,
     playingPlayersCount,
-    currentPlayerId,
     setNextPlayerId,
-    // setInitialPlayer,
+    addScoreToWinner,
     getPlayerName,
     setPlayerName,
     getPlayerSign,
+    currentPlayerId,
+    getPlayersScores,
   };
 };

@@ -7,25 +7,26 @@ import React, {
 } from "react";
 import classes from "./styles.module.scss";
 import Square from "./Square";
-//import Score from "./Score";
+import Score from "./Score";
 import { getWinner, getPositionFromNumbersToString } from "./lib/Utils";
 import { playersContext } from "./contexts/PlayersContext";
 
 interface Props {
   names: string[];
+  restart(): void;
 }
 
 const Board = (props: Props) => {
-  //TODO: Get from config
   const {
     init,
-    currentPlayerId,
+    addScoreToWinner,
     getPlayerName,
     setNextPlayerId,
-    playingPlayersCount,
+    getPlayersScores,
+    currentPlayerId,
   } = useContext(playersContext);
-  const boardSize = 5; //TODO: 15
-  const winningSize = 2; //TODO: 5
+  const boardSize = 15;
+  const winningSize = 5;
   useEffect(() => {
     init(props.names);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -36,9 +37,6 @@ const Board = (props: Props) => {
   const [moves, setMoves] = useState<Map<string, number>>(
     new Map<string, number>()
   );
-  const [scores, setScores] = useState<Array<number>>(
-    new Array<number>(playingPlayersCount()).fill(0)
-  );
 
   const winnerPlayer = useMemo<number | null>(() => {
     if (lastMove === null) return null;
@@ -48,9 +46,7 @@ const Board = (props: Props) => {
 
   useEffect(() => {
     if (winnerPlayer !== null) {
-      const clonedScores = Object.assign([], scores);
-      clonedScores[winnerPlayer]++;
-      setScores(clonedScores);
+      addScoreToWinner(winnerPlayer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [winnerPlayer]);
@@ -80,8 +76,7 @@ const Board = (props: Props) => {
   );
 
   const restartGame = () => {
-    //TODO: Fix that.
-    // setInitialPlayer();
+    props.restart();
     setLastMove(null);
     setMoves(new Map<string, number>());
   };
@@ -107,26 +102,34 @@ const Board = (props: Props) => {
     [moves, onSquareClick]
   );
 
-  const renderedSquares = Array<number>(boardSize)
-    .fill(0)
-    .map((_: any, i: number) => renderRow(i));
-
-  const body = isGameOver ? (
-    <button onClick={restartGame}>Restart</button>
-  ) : (
-    renderedSquares
-  );
+  const currentPlayerName =
+    currentPlayerId === -1 ? "" : getPlayerName(currentPlayerId);
 
   return (
     <div className={classes.game}>
       <div>
         <span>
-          Current Player:{" "}
-          {currentPlayerId === -1 ? "" : getPlayerName(currentPlayerId)}
+          {!isGameOver
+            ? `Current Player: ${currentPlayerName}`
+            : isBoardFilled
+            ? "Draw!"
+            : winnerPlayer
+            ? getPlayerName(winnerPlayer) + " won!"
+            : ""}
         </span>
       </div>
-      <div className={classes.board}>{body}</div>
-      <div>{/* <Score scores={scores}></Score> */}</div>
+      <div className={classes.board}>
+        {isGameOver ? (
+          <button onClick={restartGame}>Restart</button>
+        ) : (
+          Array<number>(boardSize)
+            .fill(0)
+            .map((_: any, i: number) => renderRow(i))
+        )}
+      </div>
+      <div>
+        <Score scores={getPlayersScores()}></Score>
+      </div>
     </div>
   );
 };
